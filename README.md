@@ -101,3 +101,24 @@ env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u AL
 - 域名：`opc.ren`
 - 目标 IP：`121.199.8.54`
 - 端口：`443`
+
+### 6.3 WSL 一键修理脚本（推荐）
+
+仓库内置了 `scripts/repair-wsl-egress.sh`，会自动完成：
+
+- 固化 `/etc/wsl.conf`（关闭自动生成 `resolv.conf`）
+- 写入稳定 DNS（默认 `223.5.5.5` / `114.114.114.114`）
+- 写入 `/etc/hosts` 映射（默认 `opc.ren -> 121.199.8.54`）
+- 追加 `no_proxy/NO_PROXY` 绕过
+
+执行：
+
+```bash
+sudo bash scripts/repair-wsl-egress.sh
+```
+
+然后在 Windows PowerShell 执行：
+
+```powershell
+wsl --shutdown
+```
