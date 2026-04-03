@@ -63,3 +63,41 @@ powershell -ExecutionPolicy Bypass -File .\scripts\egress-doctor.ps1 -Domain opc
   - TCP 443 探测结果
   - TLS 握手/证书结果
 
+## 6. 常见快速修理
+
+### 6.1 Linux / WSL DNS 解析异常
+
+如果报告显示系统 DNS 失败，可临时改为公共 DNS 复测：
+
+```bash
+sudo sh -c 'printf "nameserver 223.5.5.5\nnameserver 114.114.114.114\n" > /etc/resolv.conf'
+```
+
+WSL 想长期生效可再加：
+
+```bash
+sudo tee /etc/wsl.conf >/dev/null <<'EOF'
+[network]
+generateResolvConf = false
+EOF
+```
+
+然后重启 WSL：
+
+```powershell
+wsl --shutdown
+```
+
+### 6.2 公司代理/网关导致 HTTPS 握手失败
+
+先做直连验证：
+
+```bash
+env -u http_proxy -u https_proxy -u HTTP_PROXY -u HTTPS_PROXY -u all_proxy -u ALL_PROXY curl -I https://opc.ren
+```
+
+如果直连成功、代理失败，联系网络管理员放行域名/IP，或将该域名加入代理绕过：
+
+- 域名：`opc.ren`
+- 目标 IP：`121.199.8.54`
+- 端口：`443`
